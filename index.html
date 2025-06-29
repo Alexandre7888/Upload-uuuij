@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Upload para GitHub com Firestore</title>
+</head>
+<body>
+  <h2>Enviar arquivo para GitHub</h2>
+  <input type="file" id="fileInput" />
+  <button onclick="uploadFile()">Enviar para GitHub</button>
+  <p id="status"></p>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // Configuração do Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDY2lPlLpIm4r7aaig2LupmfOy_EhlvsTE",
+      authDomain: "taka-bot.firebaseapp.com",
+      projectId: "taka-bot",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Função para upload
+    async function uploadFile() {
+      const status = document.getElementById("status");
+      const fileInput = document.getElementById("fileInput");
+      const file = fileInput.files[0];
+
+      if (!file) {
+        status.textContent = "❌ Nenhum arquivo selecionado.";
+        return;
+      }
+
+      status.textContent = "🔄 Lendo token do Firestore...";
+
+      // Busca o token no Firestore
+      const docRef = doc(db, "tokens", "github");
+      const docSnap = await getDoc(docRef);
+
+      if (!docSnap.exists()) {
+        status.textContent = "❌ Token do GitHub não encontrado no Firestore.";
+        return;
+      }
+
+      const token = docSnap.data().token;
+      const reader = new FileReader();
+
+      reader.onload = async function () {
+        const content = reader.result.split(',')[1];
+        const filename = file.name;
+
+        const repoOwner = "Alexandre7888";
+        const repoName = "Login-8838373737";
+
+        const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filename}`;
+
+        const response = await fetch(url, {
+          method: "PUT",
+          headers: {
+            "Authorization": `token ${token}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: `Adicionando arquivo ${filename}`,
+            content: content,
+            branch: "main"
+          })
+        });
+
+        if (response.ok) {
+          status.textContent = "✅ Upload feito com sucesso!";
+        } else {
+          const error = await response.json();
+          status.textContent = `❌ Erro: ${error.message}`;
+          console.error(error);
+        }
+      };
+
+      reader.readAsDataURL(file);
+    }
+  </script>
+</body>
+</html>
