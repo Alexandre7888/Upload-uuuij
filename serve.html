@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Login com Google (Firebase)</title>
+</head>
+<body>
+  <h1>Login com Google</h1>
+  <button id="loginGoogle">Entrar com Google</button>
+  <button id="logout" style="display:none;">Sair</button>
+  <p id="status"></p>
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+    // Importes Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-analytics.js";
+
+    // Sua configuração Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBoTlu8QkuydyAMWbX18TryBRkzycjyr88",
+      authDomain: "secret-rat-ops.firebaseapp.com",
+      projectId: "secret-rat-ops",
+      storageBucket: "secret-rat-ops.firebasestorage.app",
+      messagingSenderId: "548559853118",
+      appId: "1:548559853118:web:01ce5d045c89c6bc3d236f",
+      measurementId: "G-5NJ5KMXJ8E"
+    };
+
+    // Inicializa Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    // Botões
+    const loginBtn = document.getElementById('loginGoogle');
+    const logoutBtn = document.getElementById('logout');
+    const statusP = document.getElementById('status');
+
+    // Login com Popup Google
+    loginBtn.onclick = () => {
+      signInWithPopup(auth, provider)
+        .then(result => {
+          console.log(result.user);
+        })
+        .catch(error => {
+          console.error(error);
+          alert("Erro ao fazer login");
+        });
+    };
+
+    // Logout
+    logoutBtn.onclick = () => {
+      signOut(auth);
+    };
+
+    // Escuta estado de login
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        statusP.innerHTML = `Logado como: ${user.displayName} (${user.email})`;
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = 'inline-block';
+      } else {
+        statusP.innerHTML = "Não está logado.";
+        loginBtn.style.display = 'inline-block';
+        logoutBtn.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
