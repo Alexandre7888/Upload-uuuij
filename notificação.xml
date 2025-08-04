@@ -25,5 +25,13 @@
       <guid>https://www.seusite.com/noticia2</guid>
     </item>
 
+<item>
+  <title>Nova atualização disponível</title>
+  <link>https://www.seusite.com/atualizacao3</link>
+  <description>Uma nova atualização está disponível no sistema. Clique para ver os detalhes!</description>
+  <pubDate>Mon, 05 Aug 2025 09:00:00 +0000</pubDate>
+  <guid>https://www.seusite.com/atualizacao3</guid>
+</item>
+    
   </channel>
 </rss>
