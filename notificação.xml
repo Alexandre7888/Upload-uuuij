@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+  <channel>
+    <title>Meu Feed RSS Exemplo</title>
+    <link>https://www.seusite.com</link>
+    <description>Exemplo de feed RSS criado para você</description>
+    <language>pt-br</language>
+    <lastBuildDate>Sun, 04 Aug 2025 12:00:00 +0000</lastBuildDate>
+    <pubDate>Sun, 04 Aug 2025 12:00:00 +0000</pubDate>
+    <ttl>60</ttl>
+
+    <item>
+      <title>Primeira notícia do meu feed</title>
+      <link>https://www.seusite.com/noticia1</link>
+      <description>Descrição curta da primeira notícia.</description>
+      <pubDate>Sun, 04 Aug 2025 10:00:00 +0000</pubDate>
+      <guid>https://www.seusite.com/noticia1</guid>
+    </item>
+
+    <item>
+      <title>Segunda notícia do meu feed</title>
+      <link>https://www.seusite.com/noticia2</link>
+      <description>Descrição curta da segunda notícia.</description>
+      <pubDate>Sun, 03 Aug 2025 15:00:00 +0000</pubDate>
+      <guid>https://www.seusite.com/noticia2</guid>
+    </item>
+
+  </channel>
+</rss>
