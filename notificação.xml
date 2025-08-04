@@ -40,6 +40,14 @@
   <pubDate>Mon, 05 Aug 2025 21:00:00 +0000</pubDate>
   <guid>https://www.seusite.com/boa-noite</guid>
 </item>
+
+<item>
+  <title>Bom dia!</title>
+  <link>https://www.seusite.com/bomdia</link>
+  <description>Que o seu dia comece cheio de alegria, luz e muitas conquistas!</description>
+  <pubDate>Mon, 05 Aug 2025 07:00:00 +0000</pubDate>
+  <guid>https://www.seusite.com/bomdia</guid>
+</item>
     
   </channel>
 </rss>
