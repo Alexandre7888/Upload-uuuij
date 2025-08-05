@@ -71,6 +71,14 @@
   <pubDate>Mon, 05 Aug 2025 07:00:00 +0000</pubDate>
   <guid>https://www.seusite.com/bomdia</guid>
 </item>
+
+    <item>
+  <title>Item de Teste</title>
+  <link>https://www.seusite.com/teste</link>
+  <description>Essa é apenas uma notificação de teste dentro do feed RSS.</description>
+  <pubDate>Mon, 05 Aug 2025 12:00:00 +0000</pubDate>
+  <guid>https://www.seusite.com/teste</guid>
+</item>
     
   </channel>
 </rss>
