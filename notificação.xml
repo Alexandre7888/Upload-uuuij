@@ -79,6 +79,22 @@
   <pubDate>Mon, 05 Aug 2025 12:00:00 +0000</pubDate>
   <guid>https://www.seusite.com/teste</guid>
 </item>
+
+    <item>
+  <title>Boa noite!</title>
+  <link>https://www.seusite.com/boanoite</link>
+  <description>Que sua noite seja tranquila e cheia de paz. Durma bem!</description>
+  <pubDate>Mon, 05 Aug 2025 21:00:00 +0000</pubDate>
+  <guid>https://www.seusite.com/boanoite</guid>
+</item>
+
+<item>
+  <title>Estamos pensando em fazer uma Live!</title>
+  <link>https://www.seusite.com/live</link>
+  <description>Em breve podemos fazer uma transmissão ao vivo — fiquem ligados nas próximas novidades!</description>
+  <pubDate>Mon, 05 Aug 2025 22:00:00 +0000</pubDate>
+  <guid>https://www.seusite.com/live</guid>
+</item>
     
   </channel>
 </rss>
