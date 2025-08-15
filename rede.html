@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload Vimeo</title>
+</head>
+<body>
+  <h1>Upload de vídeo para Vimeo</h1>
+
+  <!-- Botão de autorização -->
+  <a id="authorize" href="#">Autorizar Vimeo</a>
+  <p id="status"></p>
+
+  <!-- Input para selecionar vídeo -->
+  <input type="file" id="videoFile" accept="video/*">
+  <button id="uploadBtn">Enviar vídeo</button>
+
+  <script>
+    const clientId = "05a788a3aea49a1d542bd4eedc497b6deab64490";
+    const redirectUri = "https://alexandre7888.github.io/Upload-uuuij/rede.html"; // Substitua pela URL registrada
+    const scope = "public+private+video_files+interact";
+
+    // Monta a URL de autorização
+    const authUrl = `https://api.vimeo.com/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}`;
+    document.getElementById("authorize").href = authUrl;
+
+    // Pega parâmetros da URL (código de autorização)
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+
+    if (code) {
+      document.getElementById("status").innerText = "Autorizado! Código: " + code;
+      // Aqui você deveria enviar 'code' para seu servidor para trocar pelo access token
+    }
+
+    // Upload do vídeo
+    document.getElementById("uploadBtn").addEventListener("click", async () => {
+      const file = document.getElementById("videoFile").files[0];
+      if (!file) return alert("Selecione um vídeo");
+
+      const accessToken = ""; // Recebido do servidor após trocar o code
+      const uploadUrl = "https://api.vimeo.com/me/videos";
+
+      const formData = new FormData();
+      formData.append("file_data", file);
+
+      const res = await fetch(uploadUrl, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${accessToken}`
+        },
+        body: formData
+      });
+
+      const data = await res.json();
+      console.log(data);
+      alert("Upload concluído!");
+    });
+  </script>
+</body>
+</html>
