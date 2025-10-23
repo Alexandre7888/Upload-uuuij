@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Segurança - Autenticação Real</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #667eea;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background: #5a6fd8;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            display: block;
+        }
+
+        .biometric-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .option-btn {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 16px;
+        }
+
+        .option-btn:hover {
+            border-color: #667eea;
+            background: #f8f9fa;
+        }
+
+        .feature-list {
+            text-align: left;
+            margin: 20px 0;
+        }
+
+        .feature-list li {
+            margin: 10px 0;
+            color: #666;
+        }
+
+        .loading {
+            display: none;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .requirements {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .requirements h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .requirements ul {
+            color: #856404;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🏦 Banco Digital Seguro</div>
+        
+        <!-- Tela de Requisitos -->
+        <div id="requirementsScreen" class="screen active">
+            <h2>Requisitos do Sistema</h2>
+            <div class="requirements">
+                <h3>⚠️ Para usar este sistema você precisa:</h3>
+                <ul>
+                    <li>Navegador moderno (Chrome, Edge, Safari 14+, Firefox)</li>
+                    <li>HTTPS habilitado (já está em uso)</li>
+                    <li>Dispositivo com sensor biométrico</li>
+                    <li>Biometria configurada no dispositivo</li>
+                </ul>
+            </div>
+            <p>Este sistema usa a Web Authentication API para autenticação biométrica real.</p>
+            <button class="btn" onclick="checkCompatibility()">Verificar Compatibilidade</button>
+        </div>
+
+        <!-- Tela de Autenticação -->
+        <div id="authScreen" class="screen">
+            <h2>Escolha o Método de Autenticação</h2>
+            <p>Selecione como deseja acessar sua conta:</p>
+            
+            <div class="biometric-options">
+                <button class="option-btn" onclick="authenticateWithBiometric()">
+                    👆 Autenticação Biométrica
+                </button>
+                <button class="option-btn" onclick="authenticateWithPlatform()">
+                    📱 Senha do Dispositivo
+                </button>
+            </div>
+
+            <div class="message" id="authMessage"></div>
+            
+            <button class="btn btn-secondary" onclick="showRequirementsScreen()">Voltar</button>
+        </div>
+
+        <!-- Tela de Registro -->
+        <div id="registerScreen" class="screen">
+            <h2>Registro Necessário</h2>
+            <p>Para usar a autenticação biométrica, precisamos registrar suas credenciais primeiro.</p>
+            
+            <div class="feature-list">
+                <li>✅ Segurança de nível bancário</li>
+                <li>✅ Dados armazenados apenas localmente</li>
+                <li>✅ Login rápido e seguro</li>
+            </div>
+
+            <div class="message" id="registerMessage"></div>
+            
+            <button class="btn" onclick="registerBiometric()">Registrar Credencial Biométrica</button>
+            <button class="btn btn-secondary" onclick="showAuthScreen()">Voltar</button>
+        </div>
+
+        <!-- Tela de Sucesso -->
+        <div id="successScreen" class="screen">
+            <h2 style="color: #4CAF50;">✅ Autenticação Bem-sucedida!</h2>
+            <div class="message success">
+                <strong>Acesso concedido com sucesso!</strong>
+                <p>Método usado: <span id="authMethod"></span></p>
+            </div>
+            
+            <div class="feature-list">
+                <li>📊 Saldo disponível: R$ 15.247,89</li>
+                <li>💳 Cartão final 4455</li>
+                <li>📈 Investimentos: R$ 8.500,00</li>
+            </div>
+            
+            <button class="btn" onclick="logout()">Sair</button>
+        </div>
+
+        <!-- Tela de Não Suportado -->
+        <div id="unsupportedScreen" class="screen">
+            <h2>❌ Navegador Não Suportado</h2>
+            <div class="message error">
+                <p>Seu navegador ou dispositivo não suporta autenticação biométrica.</p>
+            </div>
+            
+            <div class="requirements">
+                <h3>Recomendações:</h3>
+                <ul>
+                    <li>Use Chrome, Edge ou Safari no celular</li>
+                    <li>Verifique se o HTTPS está ativo</li>
+                    <li>Configure a biometria no seu dispositivo</li>
+                    <li>Atualize seu navegador</li>
+                </ul>
+            </div>
+            
+            <button class="btn btn-secondary" onclick="showRequirementsScreen()">Voltar</button>
+        </div>
+
+        <div class="loading" id="globalLoading">
+            <div class="spinner"></div>
+            <p>Processando autenticação...</p>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis globais
+        let currentAuthMethod = '';
+
+        // Elementos DOM
+        const requirementsScreen = document.getElementById('requirementsScreen');
+        const authScreen = document.getElementById('authScreen');
+        const registerScreen = document.getElementById('registerScreen');
+        const successScreen = document.getElementById('successScreen');
+        const unsupportedScreen = document.getElementById('unsupportedScreen');
+        const authMessage = document.getElementById('authMessage');
+        const registerMessage = document.getElementById('registerMessage');
+        const globalLoading = document.getElementById('globalLoading');
+        const authMethodSpan = document.getElementById('authMethod');
+
+        // Funções de navegação
+        function showScreen(screen) {
+            requirementsScreen.classList.remove('active');
+            authScreen.classList.remove('active');
+            registerScreen.classList.remove('active');
+            successScreen.classList.remove('active');
+            unsupportedScreen.classList.remove('active');
+            screen.classList.add('active');
+        }
+
+        function showRequirementsScreen() {
+            showScreen(requirementsScreen);
+        }
+
+        function showAuthScreen() {
+            showScreen(authScreen);
+            clearMessages();
+        }
+
+        function showRegisterScreen() {
+            showScreen(registerScreen);
+            clearMessages();
+        }
+
+        function showSuccessScreen() {
+            showScreen(successScreen);
+        }
+
+        function showUnsupportedScreen() {
+            showScreen(unsupportedScreen);
+        }
+
+        function clearMessages() {
+            authMessage.className = 'message';
+            registerMessage.className = 'message';
+        }
+
+        // Verificar compatibilidade
+        function checkCompatibility() {
+            showLoading(true);
+            
+            setTimeout(() => {
+                if (!isWebAuthnSupported()) {
+                    showUnsupportedScreen();
+                    showLoading(false);
+                    return;
+                }
+
+                // Verificar se já está registrado
+                if (isUserRegistered()) {
+                    showAuthScreen();
+                } else {
+                    showRegisterScreen();
+                }
+                showLoading(false);
+            }, 1000);
+        }
+
+        // Verificar suporte a WebAuthn
+        function isWebAuthnSupported() {
+            return (
+                window.PublicKeyCredential &&
+                PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable &&
+                PublicKeyCredential.isConditionalMediationAvailable
+            );
+        }
+
+        // Verificar se usuário já está registrado
+        function isUserRegistered() {
+            return localStorage.getItem('biometricRegistered') === 'true';
+        }
+
+        // Registrar credencial biométrica
+        async function registerBiometric() {
+            showLoading(true);
+            clearMessages();
+
+            try {
+                // Verificar suporte
+                const isAvailable = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+                if (!isAvailable) {
+                    throw new Error('Autenticador de plataforma não disponível');
+                }
+
+                // Opções de registro
+                const publicKeyCredentialCreationOptions = {
+                    challenge: new Uint8Array(32),
+                    rp: {
+                        name: "Banco Digital Seguro",
+                        id: window.location.hostname
+                    },
+                    user: {
+                        id: new Uint8Array(16),
+                        name: "usuario@banco.com",
+                        displayName: "Usuário Banco Digital"
+                    },
+                    pubKeyCredParams: [
+                        {
+                            alg: -7, // ES256
+                            type: "public-key"
+                        }
+                    ],
+                    authenticatorSelection: {
+                        authenticatorAttachment: "platform",
+                        userVerification: "required"
+                    },
+                    timeout: 60000,
+                    attestation: "direct"
+                };
+
+                // Criar credencial
+                const credential = await navigator.credentials.create({
+                    publicKey: publicKeyCredentialCreationOptions
+                });
+
+                // Salvar registro local
+                localStorage.setItem('biometricRegistered', 'true');
+                localStorage.setItem('credentialId', btoa(String.fromCharCode(...new Uint8Array(credential.rawId))));
+
+                registerMessage.textContent = '✅ Credencial registrada com sucesso!';
+                registerMessage.className = 'message success';
+
+                setTimeout(() => {
+                    showAuthScreen();
+                }, 2000);
+
+            } catch (error) {
+                console.error('Erro no registro:', error);
+                registerMessage.textContent = `❌ Erro no registro: ${error.message || 'Falha na autenticação'}`;
+                registerMessage.className = 'message error';
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Autenticar com biometria
+        async function authenticateWithBiometric() {
+            await authenticate('biometric', 'preferred');
+        }
+
+        // Autenticar com senha do dispositivo
+        async function authenticateWithPlatform() {
+            await authenticate('platform', 'required');
+        }
+
+        // Função principal de autenticação
+        async function authenticate(authenticatorAttachment, userVerification) {
+            showLoading(true);
+            clearMessages();
+
+            try {
+                if (!isUserRegistered()) {
+                    throw new Error('Usuário não registrado. Por favor, registre-se primeiro.');
+                }
+
+                // Opções de autenticação
+                const publicKeyCredentialRequestOptions = {
+                    challenge: new Uint8Array(32),
+                    allowCredentials: [
+                        {
+                            id: Uint8Array.from(atob(localStorage.getItem('credentialId')), c => c.charCodeAt(0)),
+                            type: 'public-key',
+                            transports: ['internal']
+                        }
+                    ],
+                    userVerification: userVerification,
+                    timeout: 60000
+                };
+
+                // Tentar autenticação
+                const assertion = await navigator.credentials.get({
+                    publicKey: publicKeyCredentialRequestOptions,
+                    mediation: 'conditional'
+                });
+
+                // Autenticação bem-sucedida
+                currentAuthMethod = authenticatorAttachment === 'biometric' ? 'Biometria' : 'Senha do Dispositivo';
+                authMethodSpan.textContent = currentAuthMethod;
+                showSuccessScreen();
+
+            } catch (error) {
+                console.error('Erro na autenticação:', error);
+                
+                let errorMessage = 'Falha na autenticação. ';
+                
+                if (error.name === 'NotAllowedError') {
+                    errorMessage += 'Autenticação cancelada pelo usuário.';
+                } else if (error.name === 'SecurityError') {
+                    errorMessage += 'Erro de segurança. Certifique-se de estar usando HTTPS.';
+                } else if (error.name === 'NotSupportedError') {
+                    errorMessage += 'Método não suportado pelo seu dispositivo.';
+                } else {
+                    errorMessage += error.message || 'Tente novamente.';
+                }
+
+                authMessage.textContent = errorMessage;
+                authMessage.className = 'message error';
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Controle de loading
+        function showLoading(show) {
+            globalLoading.style.display = show ? 'block' : 'none';
+        }
+
+        // Logout
+        function logout() {
+            showAuthScreen();
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar se estamos em HTTPS
+            if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+                authMessage.textContent = '⚠️ Este sistema requer HTTPS para funcionar corretamente.';
+                authMessage.className = 'message error';
+            }
+        });
+    </script>
+</body>
+</html>
