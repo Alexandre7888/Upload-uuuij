@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Segurança - Autenticação Real</title>
+    <title>Banco Digital + Chat</title>
     <style>
         * {
             margin: 0;
@@ -12,143 +12,115 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            color: white;
         }
 
-        .container {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 20px;
+        .phone {
+            width: 320px;
+            height: 640px;
+            background: #111;
+            border-radius: 40px;
+            border: 6px solid #333;
+            position: relative;
+            overflow: hidden;
         }
 
         .screen {
-            display: none;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        h2 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        p {
-            color: #666;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
-        .btn {
             width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 10px;
-            background: #667eea;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            margin-top: 10px;
+            height: 100%;
+            background: #000;
+            position: relative;
         }
 
-        .btn:hover {
-            background: #5a6fd8;
+        .status-bar {
+            height: 44px;
+            background: transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 14px;
         }
 
-        .btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-        }
-
-        .message {
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0;
-            display: none;
-        }
-
-        .message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            display: block;
-        }
-
-        .message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            display: block;
-        }
-
-        .message.info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-            display: block;
-        }
-
-        .biometric-options {
+        .content {
+            padding: 40px 20px;
+            text-align: center;
+            height: calc(100% - 44px);
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin: 20px 0;
         }
 
-        .option-btn {
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .app-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+            border-radius: 20px;
+            margin: 0 auto 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            font-size: 32px;
+        }
+
+        .biometric-prompt {
+            margin: 20px auto;
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        .biometric-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .biometric-button {
+            width: 200px;
+            height: 50px;
+            background: #007AFF;
+            border: none;
+            border-radius: 25px;
+            color: white;
             font-size: 16px;
+            font-weight: 600;
+            margin: 20px auto;
+            cursor: pointer;
+            display: block;
         }
 
-        .option-btn:hover {
-            border-color: #667eea;
-            background: #f8f9fa;
+        .biometric-button:active {
+            background: #0056CC;
         }
 
-        .feature-list {
-            text-align: left;
+        .message {
             margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
         }
 
-        .feature-list li {
-            margin: 10px 0;
-            color: #666;
+        .success {
+            background: rgba(52, 199, 89, 0.2);
+            border: 1px solid #34C759;
+            color: #34C759;
+        }
+
+        .error {
+            background: rgba(255, 59, 48, 0.2);
+            border: 1px solid #FF3B30;
+            color: #FF3B30;
+        }
+
+        .info {
+            background: rgba(0, 122, 255, 0.2);
+            border: 1px solid #007AFF;
+            color: #007AFF;
         }
 
         .loading {
@@ -157,11 +129,11 @@
         }
 
         .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid #007AFF;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 30px;
+            height: 30px;
             animation: spin 1s linear infinite;
             margin: 0 auto;
         }
@@ -171,359 +143,426 @@
             100% { transform: rotate(360deg); }
         }
 
-        .requirements {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 10px;
+        .home-indicator {
+            width: 134px;
+            height: 5px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 3px;
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Chat Button Styles */
+        .chat-button {
+            position: absolute;
+            bottom: 80px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #34C759, #30D158);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(52, 199, 89, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(52, 199, 89, 0.4);
+        }
+
+        .chat-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Chat Modal */
+        .chat-modal {
+            display: none;
+            position: absolute;
+            bottom: 150px;
+            right: 20px;
+            width: 280px;
+            height: 400px;
+            background: #1C1C1E;
+            border-radius: 20px;
+            border: 1px solid #2C2C2E;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 1001;
+            flex-direction: column;
+        }
+
+        .chat-header {
             padding: 15px;
-            margin: 20px 0;
-            text-align: left;
+            background: #2C2C2E;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .requirements h3 {
-            color: #856404;
-            margin-bottom: 10px;
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            background: #007AFF;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
         }
 
-        .requirements ul {
-            color: #856404;
-            padding-left: 20px;
+        .chat-title {
+            font-weight: 600;
+        }
+
+        .chat-status {
+            font-size: 12px;
+            color: #34C759;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .bot-message {
+            background: #2C2C2E;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .user-message {
+            background: #007AFF;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-input-container {
+            padding: 15px;
+            border-top: 1px solid #2C2C2E;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex-grow: 1;
+            background: #2C2C2E;
+            border: none;
+            border-radius: 20px;
+            padding: 12px 16px;
+            color: white;
+            font-size: 14px;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            background: #3A3A3C;
+        }
+
+        .send-button {
+            width: 40px;
+            height: 40px;
+            background: #007AFF;
+            border: none;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-chat {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #8E8E93;
+            font-size: 20px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">🏦 Banco Digital Seguro</div>
-        
-        <!-- Tela de Requisitos -->
-        <div id="requirementsScreen" class="screen active">
-            <h2>Requisitos do Sistema</h2>
-            <div class="requirements">
-                <h3>⚠️ Para usar este sistema você precisa:</h3>
-                <ul>
-                    <li>Navegador moderno (Chrome, Edge, Safari 14+, Firefox)</li>
-                    <li>HTTPS habilitado (já está em uso)</li>
-                    <li>Dispositivo com sensor biométrico</li>
-                    <li>Biometria configurada no dispositivo</li>
-                </ul>
-            </div>
-            <p>Este sistema usa a Web Authentication API para autenticação biométrica real.</p>
-            <button class="btn" onclick="checkCompatibility()">Verificar Compatibilidade</button>
-        </div>
-
-        <!-- Tela de Autenticação -->
-        <div id="authScreen" class="screen">
-            <h2>Escolha o Método de Autenticação</h2>
-            <p>Selecione como deseja acessar sua conta:</p>
-            
-            <div class="biometric-options">
-                <button class="option-btn" onclick="authenticateWithBiometric()">
-                    👆 Autenticação Biométrica
-                </button>
-                <button class="option-btn" onclick="authenticateWithPlatform()">
-                    📱 Senha do Dispositivo
-                </button>
-            </div>
-
-            <div class="message" id="authMessage"></div>
-            
-            <button class="btn btn-secondary" onclick="showRequirementsScreen()">Voltar</button>
-        </div>
-
-        <!-- Tela de Registro -->
-        <div id="registerScreen" class="screen">
-            <h2>Registro Necessário</h2>
-            <p>Para usar a autenticação biométrica, precisamos registrar suas credenciais primeiro.</p>
-            
-            <div class="feature-list">
-                <li>✅ Segurança de nível bancário</li>
-                <li>✅ Dados armazenados apenas localmente</li>
-                <li>✅ Login rápido e seguro</li>
-            </div>
-
-            <div class="message" id="registerMessage"></div>
-            
-            <button class="btn" onclick="registerBiometric()">Registrar Credencial Biométrica</button>
-            <button class="btn btn-secondary" onclick="showAuthScreen()">Voltar</button>
-        </div>
-
-        <!-- Tela de Sucesso -->
-        <div id="successScreen" class="screen">
-            <h2 style="color: #4CAF50;">✅ Autenticação Bem-sucedida!</h2>
-            <div class="message success">
-                <strong>Acesso concedido com sucesso!</strong>
-                <p>Método usado: <span id="authMethod"></span></p>
+    <div class="phone">
+        <div class="screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 100% 🔋</span>
             </div>
             
-            <div class="feature-list">
-                <li>📊 Saldo disponível: R$ 15.247,89</li>
-                <li>💳 Cartão final 4455</li>
-                <li>📈 Investimentos: R$ 8.500,00</li>
-            </div>
-            
-            <button class="btn" onclick="logout()">Sair</button>
-        </div>
+            <div class="content">
+                <div class="app-icon">🏦</div>
+                <h2>Banco Digital</h2>
+                <p>Autenticação Segura</p>
 
-        <!-- Tela de Não Suportado -->
-        <div id="unsupportedScreen" class="screen">
-            <h2>❌ Navegador Não Suportado</h2>
-            <div class="message error">
-                <p>Seu navegador ou dispositivo não suporta autenticação biométrica.</p>
-            </div>
-            
-            <div class="requirements">
-                <h3>Recomendações:</h3>
-                <ul>
-                    <li>Use Chrome, Edge ou Safari no celular</li>
-                    <li>Verifique se o HTTPS está ativo</li>
-                    <li>Configure a biometria no seu dispositivo</li>
-                    <li>Atualize seu navegador</li>
-                </ul>
-            </div>
-            
-            <button class="btn btn-secondary" onclick="showRequirementsScreen()">Voltar</button>
-        </div>
+                <div class="biometric-prompt">
+                    <div class="biometric-icon" id="biometricIcon">👆</div>
+                    <h3 id="promptTitle">Biometria Requerida</h3>
+                    <p id="promptText">Use sua digital, Face ID ou senha do dispositivo</p>
+                    
+                    <button class="biometric-button" onclick="startRealBiometric()" id="authButton">
+                        Autenticar
+                    </button>
 
-        <div class="loading" id="globalLoading">
-            <div class="spinner"></div>
-            <p>Processando autenticação...</p>
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <p>Processando...</p>
+                    </div>
+
+                    <div class="message" id="message"></div>
+                </div>
+
+                <!-- Botão do Chat -->
+                <button class="chat-button" onclick="toggleChat()">💬</button>
+
+                <!-- Modal do Chat -->
+                <div class="chat-modal" id="chatModal">
+                    <button class="close-chat" onclick="toggleChat()">×</button>
+                    <div class="chat-header">
+                        <div class="chat-avatar">🤖</div>
+                        <div>
+                            <div class="chat-title">Suporte Banco Digital</div>
+                            <div class="chat-status">● Online</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message-bubble bot-message">
+                            Olá! Sou seu assistente virtual. Como posso ajudar?
+                        </div>
+                        <div class="message-bubble bot-message">
+                            Posso ajudar com: 📊 Saldo, 💳 Cartões, 📈 Investimentos, 🔐 Segurança
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" id="chatInput" placeholder="Digite sua mensagem...">
+                        <button class="send-button" onclick="sendMessage()">➤</button>
+                    </div>
+                </div>
+
+                <div class="home-indicator"></div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Variáveis globais
-        let currentAuthMethod = '';
+        // ===== BIOMETRIA REAL =====
+        const biometricIcon = document.getElementById('biometricIcon');
+        const promptTitle = document.getElementById('promptTitle');
+        const promptText = document.getElementById('promptText');
+        const authButton = document.getElementById('authButton');
+        const loading = document.getElementById('loading');
+        const message = document.getElementById('message');
 
-        // Elementos DOM
-        const requirementsScreen = document.getElementById('requirementsScreen');
-        const authScreen = document.getElementById('authScreen');
-        const registerScreen = document.getElementById('registerScreen');
-        const successScreen = document.getElementById('successScreen');
-        const unsupportedScreen = document.getElementById('unsupportedScreen');
-        const authMessage = document.getElementById('authMessage');
-        const registerMessage = document.getElementById('registerMessage');
-        const globalLoading = document.getElementById('globalLoading');
-        const authMethodSpan = document.getElementById('authMethod');
-
-        // Funções de navegação
-        function showScreen(screen) {
-            requirementsScreen.classList.remove('active');
-            authScreen.classList.remove('active');
-            registerScreen.classList.remove('active');
-            successScreen.classList.remove('active');
-            unsupportedScreen.classList.remove('active');
-            screen.classList.add('active');
-        }
-
-        function showRequirementsScreen() {
-            showScreen(requirementsScreen);
-        }
-
-        function showAuthScreen() {
-            showScreen(authScreen);
-            clearMessages();
-        }
-
-        function showRegisterScreen() {
-            showScreen(registerScreen);
-            clearMessages();
-        }
-
-        function showSuccessScreen() {
-            showScreen(successScreen);
-        }
-
-        function showUnsupportedScreen() {
-            showScreen(unsupportedScreen);
-        }
-
-        function clearMessages() {
-            authMessage.className = 'message';
-            registerMessage.className = 'message';
-        }
-
-        // Verificar compatibilidade
-        function checkCompatibility() {
-            showLoading(true);
-            
-            setTimeout(() => {
-                if (!isWebAuthnSupported()) {
-                    showUnsupportedScreen();
-                    showLoading(false);
-                    return;
-                }
-
-                // Verificar se já está registrado
-                if (isUserRegistered()) {
-                    showAuthScreen();
-                } else {
-                    showRegisterScreen();
-                }
-                showLoading(false);
-            }, 1000);
-        }
-
-        // Verificar suporte a WebAuthn
-        function isWebAuthnSupported() {
-            return (
-                window.PublicKeyCredential &&
-                PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable &&
-                PublicKeyCredential.isConditionalMediationAvailable
-            );
-        }
-
-        // Verificar se usuário já está registrado
-        function isUserRegistered() {
-            return localStorage.getItem('biometricRegistered') === 'true';
-        }
-
-        // Registrar credencial biométrica
-        async function registerBiometric() {
-            showLoading(true);
-            clearMessages();
+        // Detectar tipo de biometria
+        async function detectBiometricType() {
+            if (!window.PublicKeyCredential) {
+                showMessage('Biometria não suportada', 'error');
+                return;
+            }
 
             try {
-                // Verificar suporte
-                const isAvailable = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-                if (!isAvailable) {
-                    throw new Error('Autenticador de plataforma não disponível');
+                const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+                
+                if (available) {
+                    if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+                        biometricIcon.textContent = '👁️';
+                        promptTitle.textContent = 'Face ID';
+                        promptText.textContent = 'Use o Face ID ou Touch ID para continuar';
+                    }
+                    else if (/Android/.test(navigator.userAgent)) {
+                        biometricIcon.textContent = '👆';
+                        promptTitle.textContent = 'Verificação de Digital';
+                        promptText.textContent = 'Toque no sensor de digital';
+                    }
+                }
+            } catch (error) {
+                showMessage('Erro ao verificar biometria', 'error');
+            }
+        }
+
+        // Biometria REAL
+        async function startRealBiometric() {
+            showLoading(true);
+            clearMessage();
+
+            try {
+                if (!window.PublicKeyCredential) {
+                    throw new Error('WebAuthn não suportado');
                 }
 
-                // Opções de registro
-                const publicKeyCredentialCreationOptions = {
-                    challenge: new Uint8Array(32),
-                    rp: {
-                        name: "Banco Digital Seguro",
-                        id: window.location.hostname
-                    },
-                    user: {
-                        id: new Uint8Array(16),
-                        name: "usuario@banco.com",
-                        displayName: "Usuário Banco Digital"
-                    },
-                    pubKeyCredParams: [
-                        {
-                            alg: -7, // ES256
-                            type: "public-key"
-                        }
-                    ],
-                    authenticatorSelection: {
-                        authenticatorAttachment: "platform",
-                        userVerification: "required"
-                    },
-                    timeout: 60000,
-                    attestation: "direct"
-                };
-
-                // Criar credencial
-                const credential = await navigator.credentials.create({
-                    publicKey: publicKeyCredentialCreationOptions
-                });
-
-                // Salvar registro local
-                localStorage.setItem('biometricRegistered', 'true');
-                localStorage.setItem('credentialId', btoa(String.fromCharCode(...new Uint8Array(credential.rawId))));
-
-                registerMessage.textContent = '✅ Credencial registrada com sucesso!';
-                registerMessage.className = 'message success';
-
-                setTimeout(() => {
-                    showAuthScreen();
-                }, 2000);
+                const isCMA = await PublicKeyCredential.isConditionalMediationAvailable();
+                
+                if (isCMA) {
+                    await authenticateWithConditionalMediation();
+                } else {
+                    await authenticateWithTraditional();
+                }
 
             } catch (error) {
-                console.error('Erro no registro:', error);
-                registerMessage.textContent = `❌ Erro no registro: ${error.message || 'Falha na autenticação'}`;
-                registerMessage.className = 'message error';
+                handleBiometricError(error);
             } finally {
                 showLoading(false);
             }
         }
 
-        // Autenticar com biometria
-        async function authenticateWithBiometric() {
-            await authenticate('biometric', 'preferred');
-        }
-
-        // Autenticar com senha do dispositivo
-        async function authenticateWithPlatform() {
-            await authenticate('platform', 'required');
-        }
-
-        // Função principal de autenticação
-        async function authenticate(authenticatorAttachment, userVerification) {
-            showLoading(true);
-            clearMessages();
-
+        async function authenticateWithConditionalMediation() {
             try {
-                if (!isUserRegistered()) {
-                    throw new Error('Usuário não registrado. Por favor, registre-se primeiro.');
-                }
-
-                // Opções de autenticação
-                const publicKeyCredentialRequestOptions = {
+                const options = {
                     challenge: new Uint8Array(32),
-                    allowCredentials: [
-                        {
-                            id: Uint8Array.from(atob(localStorage.getItem('credentialId')), c => c.charCodeAt(0)),
-                            type: 'public-key',
-                            transports: ['internal']
-                        }
-                    ],
-                    userVerification: userVerification,
+                    allowCredentials: [],
+                    userVerification: 'required',
                     timeout: 60000
                 };
 
-                // Tentar autenticação
-                const assertion = await navigator.credentials.get({
-                    publicKey: publicKeyCredentialRequestOptions,
+                const credential = await navigator.credentials.get({
+                    publicKey: options,
                     mediation: 'conditional'
                 });
 
-                // Autenticação bem-sucedida
-                currentAuthMethod = authenticatorAttachment === 'biometric' ? 'Biometria' : 'Senha do Dispositivo';
-                authMethodSpan.textContent = currentAuthMethod;
-                showSuccessScreen();
-
-            } catch (error) {
-                console.error('Erro na autenticação:', error);
-                
-                let errorMessage = 'Falha na autenticação. ';
-                
-                if (error.name === 'NotAllowedError') {
-                    errorMessage += 'Autenticação cancelada pelo usuário.';
-                } else if (error.name === 'SecurityError') {
-                    errorMessage += 'Erro de segurança. Certifique-se de estar usando HTTPS.';
-                } else if (error.name === 'NotSupportedError') {
-                    errorMessage += 'Método não suportado pelo seu dispositivo.';
-                } else {
-                    errorMessage += error.message || 'Tente novamente.';
+                if (credential) {
+                    showMessage('✅ Autenticação REAL bem-sucedida!', 'success');
+                    simulateAppAccess();
                 }
-
-                authMessage.textContent = errorMessage;
-                authMessage.className = 'message error';
-            } finally {
-                showLoading(false);
+            } catch (error) {
+                throw error;
             }
         }
 
-        // Controle de loading
-        function showLoading(show) {
-            globalLoading.style.display = show ? 'block' : 'none';
+        function handleBiometricError(error) {
+            let errorMessage = 'Falha na autenticação';
+            switch (error.name) {
+                case 'NotAllowedError':
+                    errorMessage = 'Autenticação cancelada';
+                    break;
+                case 'SecurityError':
+                    errorMessage = 'Use HTTPS para biometria real';
+                    break;
+                default:
+                    errorMessage = `Erro: ${error.message || 'Tente novamente'}`;
+            }
+            showMessage(`❌ ${errorMessage}`, 'error');
         }
 
-        // Logout
-        function logout() {
-            showAuthScreen();
+        function simulateAppAccess() {
+            setTimeout(() => {
+                showMessage('🎉 Acesso concedido!', 'success');
+                setTimeout(() => {
+                    alert('Bem-vindo ao Banco Digital!\nSaldo: R$ 15.247,89');
+                }, 1000);
+            }, 1000);
+        }
+
+        // ===== SISTEMA DE CHAT =====
+        const chatModal = document.getElementById('chatModal');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+
+        function toggleChat() {
+            if (chatModal.style.display === 'flex') {
+                chatModal.style.display = 'none';
+            } else {
+                chatModal.style.display = 'flex';
+                chatInput.focus();
+            }
+        }
+
+        function sendMessage() {
+            const userMessage = chatInput.value.trim();
+            if (!userMessage) return;
+
+            // Adicionar mensagem do usuário
+            addMessage(userMessage, 'user');
+            chatInput.value = '';
+
+            // Simular resposta do bot
+            setTimeout(() => {
+                const botResponse = generateBotResponse(userMessage);
+                addMessage(botResponse, 'bot');
+            }, 1000);
+        }
+
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message-bubble ${sender}-message`;
+            messageDiv.textContent = text;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function generateBotResponse(userMessage) {
+            const message = userMessage.toLowerCase();
+            
+            if (message.includes('saldo') || message.includes('dinheiro')) {
+                return 'Seu saldo atual é R$ 15.247,89. Posso ajudar com mais alguma coisa?';
+            }
+            else if (message.includes('cartão') || message.includes('cartao')) {
+                return 'Seu cartão final 4455 está ativo. Limite: R$ 8.000,00. Precisa de ajuda com o cartão?';
+            }
+            else if (message.includes('investimento') || message.includes('renda')) {
+                return 'Seus investimentos totais: R$ 8.500,00. CDB: R$ 3.200,00 | Tesouro Direto: R$ 5.300,00';
+            }
+            else if (message.includes('segurança') || message.includes('seguranca')) {
+                return 'Sua conta está protegida com: ✅ Biometria ✅ 2FA ✅ Monitoramento 24h';
+            }
+            else if (message.includes('oi') || message.includes('olá') || message.includes('ola')) {
+                return 'Olá! 😊 Sou seu assistente virtual do banco. Como posso ajudar você hoje?';
+            }
+            else {
+                return 'Entendi! Para melhor atendimento, posso ajudar com: saldo, cartões, investimentos ou segurança. O que você precisa?';
+            }
+        }
+
+        // Enter para enviar mensagem
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // ===== FUNÇÕES AUXILIARES =====
+        function showLoading(show) {
+            loading.style.display = show ? 'block' : 'none';
+            authButton.disabled = show;
+        }
+
+        function showMessage(text, type) {
+            message.textContent = text;
+            message.className = `message ${type}`;
+        }
+
+        function clearMessage() {
+            message.className = 'message';
+            message.textContent = '';
         }
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
-            // Verificar se estamos em HTTPS
             if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
-                authMessage.textContent = '⚠️ Este sistema requer HTTPS para funcionar corretamente.';
-                authMessage.className = 'message error';
+                showMessage('⚠️ Para biometria REAL, use HTTPS', 'info');
             }
+            detectBiometricType();
         });
     </script>
 </body>
