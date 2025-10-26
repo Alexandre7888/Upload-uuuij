@@ -1,65 +1,135 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stream Simulator</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Teste WebAuthn - Biometria Real</title>
 </head>
 <body>
-    <div id="app-container">
-        <div id="stream-container">
-            <video id="live-video" autoplay playsinline></video>
-            <div id="placeholder" class="placeholder-active">
-                <i class="fas fa-video"></i>
-                <p>Your stream will appear here</p>
-            </div>
-            <div id="stream-overlay" class="hidden">
-                <div class="top-bar">
-                    <span class="live-badge">LIVE</span>
-                    <div class="viewers">
-                        <i class="fas fa-eye"></i>
-                        <span id="viewer-count">0</span>
-                    </div>
-                </div>
-                 <div class="streamer-mic-status">
-                    <i id="mic-icon" class="fas fa-microphone"></i>
-                </div>
-                <div id="viewer-volume-control" class="hidden">
-                    <i id="viewer-mute-icon" class="fas fa-volume-mute"></i>
-                </div>
-            </div>
-            <div id="volume-control" class="hidden">
-                <button id="unmute-btn">
-                    <i class="fas fa-volume-mute"></i>
-                    <span>Click to Unmute</span>
-                </button>
-            </div>
-        </div>
-
-        <div id="chat-container">
-            <div class="chat-header">
-                <h3>Live Chat</h3>
-            </div>
-            <div id="chat-messages">
-                <!-- Simulated messages will appear here -->
-            </div>
-            <div class="chat-input-area">
-                <input type="text" id="chat-input" placeholder="Send a message...">
-                <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
-            </div>
-        </div>
+    <h1>Teste de Autenticação Biométrica (WebAuthn)</h1>
+    
+    <div id="status"></div>
+    
+    <div>
+        <h2>Registrar Dispositivo</h2>
+        <button onclick="register()">Registrar Biometria</button>
+    </div>
+    
+    <div>
+        <h2>Autenticar</h2>
+        <button onclick="authenticate()">Usar Biometria</button>
+    </div>
+    
+    <div>
+        <h2>Verificar Suporte</h2>
+        <button onclick="checkSupport()">Verificar Suporte do Navegador</button>
     </div>
 
-    <div id="controls-container">
-        <button id="start-btn"><i class="fas fa-play"></i> Start Live</button>
-        <button id="stop-btn" class="hidden"><i class="fas fa-stop"></i> Stop Live</button>
-        <button id="copy-link-btn"><i class="fas fa-share-alt"></i> Copy Link</button>
-        <span id="copy-notification" class="hidden">Link Copied!</span>
-    </div>
+    <script>
+        const statusDiv = document.getElementById('status');
+        
+        // Verificar se o navegador suporta WebAuthn
+        function checkSupport() {
+            if (window.PublicKeyCredential) {
+                statusDiv.innerHTML = '<p style="color: green;">✅ Navegador compatível com WebAuthn!</p>';
+                
+                // Verificar se há autenticadores disponíveis
+                PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+                    .then(available => {
+                        if (available) {
+                            statusDiv.innerHTML += '<p style="color: green;">✅ Autenticador biométrico disponível!</p>';
+                        } else {
+                            statusDiv.innerHTML += '<p style="color: orange;">⚠️ Autenticador biométrico não disponível</p>';
+                        }
+                    });
+            } else {
+                statusDiv.innerHTML = '<p style="color: red;">❌ Navegador NÃO compatível com WebAuthn</p>';
+            }
+        }
 
-    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-    <script src="script.js"></script>
+        // Registrar nova credencial biométrica
+        async function register() {
+            statusDiv.innerHTML = '<p>Aguardando registro biométrico...</p>';
+            
+            try {
+                // Em um sistema real, isso viria do servidor
+                const challenge = new Uint8Array(32);
+                crypto.getRandomValues(challenge);
+                
+                const publicKeyCredentialCreationOptions = {
+                    challenge: challenge,
+                    rp: {
+                        name: "Meu Site de Teste",
+                        id: window.location.hostname
+                    },
+                    user: {
+                        id: new Uint8Array(16),
+                        name: "usuario@teste.com",
+                        displayName: "Usuário Teste"
+                    },
+                    pubKeyCredParams: [
+                        {
+                            type: "public-key",
+                            alg: -7 // ES256
+                        }
+                    ],
+                    authenticatorSelection: {
+                        authenticatorAttachment: "platform", // Biometria integrada
+                        userVerification: "required"
+                    },
+                    timeout: 60000,
+                    attestation: "direct"
+                };
+
+                const credential = await navigator.credentials.create({
+                    publicKey: publicKeyCredentialCreationOptions
+                });
+
+                statusDiv.innerHTML = '<p style="color: green;">✅ Biometria registrada com sucesso!</p>';
+                console.log('Credencial registrada:', credential);
+                
+                // Em um sistema real, enviar a credencial para o servidor
+                
+            } catch (error) {
+                console.error('Erro no registro:', error);
+                statusDiv.innerHTML = `<p style="color: red;">❌ Erro no registro: ${error.message}</p>`;
+            }
+        }
+
+        // Autenticar com biometria
+        async function authenticate() {
+            statusDiv.innerHTML = '<p>Aguardando autenticação biométrica...</p>';
+            
+            try {
+                // Em um sistema real, isso viria do servidor
+                const challenge = new Uint8Array(32);
+                crypto.getRandomValues(challenge);
+                
+                const publicKeyCredentialRequestOptions = {
+                    challenge: challenge,
+                    allowCredentials: [], // Deixar vazio para permitir qualquer credencial registrada
+                    rpId: window.location.hostname,
+                    timeout: 60000,
+                    userVerification: "required"
+                };
+
+                const assertion = await navigator.credentials.get({
+                    publicKey: publicKeyCredentialRequestOptions
+                });
+
+                statusDiv.innerHTML = '<p style="color: green;">✅ Autenticação biométrica bem-sucedida!</p>';
+                console.log('Assertion:', assertion);
+                
+                // Em um sistema real, enviar a assertion para o servidor para verificação
+                
+            } catch (error) {
+                console.error('Erro na autenticação:', error);
+                statusDiv.innerHTML = `<p style="color: red;">❌ Erro na autenticação: ${error.message}</p>`;
+            }
+        }
+
+        // Verificar suporte ao carregar a página
+        window.onload = checkSupport;
+    </script>
 </body>
 </html>
